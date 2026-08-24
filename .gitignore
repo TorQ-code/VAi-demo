@@ -1,0 +1,4 @@
+# scrollcraft workspace: keep BRIEF.md / built pages, drop reproducible cruft
+scrollcraft/**/node_modules/
+scrollcraft/**/package-lock.json
+scrollcraft/**/lab/
