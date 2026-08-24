@@ -58,37 +58,75 @@
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
   /* --------------------------------------------------------- act one --- */
-  /* aspect matches the hero screenshot's own crop (780x1490). The source
-     capture had a "Validation failed" error line under the Validate button,
-     which is the last thing a validator's hero should show, so the asset is
-     cropped above it and the frame matches that crop rather than cover-
-     cropping the card's edges away. */
-  .phone-frame {
-    position: relative; width: min(19rem, 62vw); aspect-ratio: 780 / 1490;
-    border-radius: 2.4rem; padding: 0.45rem;
-    background: linear-gradient(160deg, #2A3554, #0C1424);
-    box-shadow: var(--sc-e3), var(--sc-edge);
-    transform: scale(calc(1 + var(--sc-p, 0) * 0.06));
-    will-change: transform;
+  /* ---- the device ------------------------------------------------------
+     One hardware component, used for every screen on the page. The
+     screenshots are cropped to screen content only, so the phone itself is
+     drawn here and is identical everywhere: titanium rail, black bezel, the
+     glass inset inside it, side buttons, and a raking glare. Callers set
+     --device-w and nothing else; every other measurement derives from it. */
+  .device {
+    position: relative;
+    width: var(--device-w, 19rem);
+    aspect-ratio: 1170 / 2532;        /* the true screen ratio of the captures */
+    border-radius: calc(var(--device-w, 19rem) * 0.148);
+    padding: calc(var(--device-w, 19rem) * 0.012);
+    background: linear-gradient(148deg,
+      #7A87A6 0%, #2C3448 15%, #171D2C 42%, #2B3348 72%, #8793B0 100%);
+    box-shadow:
+      0 2px 4px hsl(220 40% 2% / 0.40),
+      0 22px 44px -12px hsl(220 40% 2% / 0.55),
+      0 56px 104px -28px hsl(220 40% 2% / 0.45);
   }
-  .phone-frame__screen {
-    width: 100%; height: 100%; border-radius: 1.95rem; overflow: clip;
-    background: var(--sc-canvas);
+  .device__bezel {
+    width: 100%; height: 100%;
+    border-radius: calc(var(--device-w, 19rem) * 0.136);
+    padding: calc(var(--device-w, 19rem) * 0.013);
+    background: #04070D;
   }
-  .phone-frame__screen img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+  .device__screen {
+    position: relative; width: 100%; height: 100%;
+    border-radius: calc(var(--device-w, 19rem) * 0.123);
+    overflow: clip; background: var(--sc-canvas);
+  }
+  .device__screen img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+  .device__glare {
+    position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(102deg,
+      color-mix(in oklab, #BFD4FF 10%, transparent) 0%,
+      transparent 32%, transparent 70%,
+      color-mix(in oklab, #BFD4FF 5%, transparent) 100%);
+  }
+  /* side buttons on the rail: volume pair left, side button right */
+  .device__btn {
+    position: absolute; width: calc(var(--device-w, 19rem) * 0.011);
+    background: linear-gradient(180deg, #4E5972, #232A3B);
+    border-radius: 1px; z-index: -1;
+  }
+  .device__btn--vol   { left: calc(var(--device-w, 19rem) * -0.009); top: 19%; height: 8%; }
+  .device__btn--vol2  { left: calc(var(--device-w, 19rem) * -0.009); top: 29%; height: 8%; }
+  .device__btn--side  { right: calc(var(--device-w, 19rem) * -0.009); top: 25%; height: 12%; }
+
   /* NB: these three classes (.hero-stage, .turn-stage, .close) live on the
      SAME element the engine turns into .sc-stage (position:sticky, height:
      100vh). Never redeclare position or height here: this stylesheet loads
      after scrollcraft.css, so a same-specificity class rule here would win
-     the cascade and silently un-stick the pin. Flex layout only. */
+     the cascade and silently un-stick the pin. Layout only. */
   .hero-stage {
-    display: flex; align-items: center; justify-content: center;
-    background: radial-gradient(120% 90% at 50% 30%, #132242 0%, var(--sc-canvas) 70%);
+    display: grid; align-content: center; align-items: center;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: clamp(2rem, 5vw, 5.5rem);
+    padding-inline: var(--sc-gutter);
+    background: radial-gradient(120% 90% at 64% 34%, #142544 0%, var(--sc-canvas) 68%);
   }
-  .hero-copy {
-    position: absolute; left: var(--sc-gutter); bottom: clamp(3rem, 12vh, 8rem);
-    max-width: min(30rem, 78vw); z-index: var(--sc-z-copy);
+  .hero-stage .device {
+    --device-w: min(18.5rem, 32vw); justify-self: center;
+    transform: scale(calc(1 + var(--sc-p, 0) * 0.05)); will-change: transform;
   }
+  /* The copy was absolutely positioned over the stage, which overlapped the
+     phone by 137px at 1100 and 56px at 1280 and only cleared at 1440. A
+     discrete object is not full-bleed media, so the copy gets its own grid
+     column instead of an overlay. */
+  .hero-copy { max-width: 34rem; z-index: var(--sc-z-copy); }
   .hero-copy .sc-label { color: var(--sc-accent); }
   .hero-copy h1 { margin-top: var(--sc-3); font-size: var(--sc-t-3xl); }
   @media (max-width: 700px) { .hero-copy h1 { font-size: var(--sc-t-2xl); } }
@@ -192,14 +230,17 @@
   .rail { gap: var(--sc-6); padding-inline: var(--sc-gutter); align-items: center; }
   .rail__lead { width: clamp(20rem, 24vw, 32rem); flex: none; padding-right: var(--sc-6); }
   .rail-item { width: clamp(17rem, 22vw, 30rem); flex: none; }
+  .rail-item figure { margin: 0; display: flex; justify-content: center; }
+  /* the pan stage is 100vh but the rail is only as tall as its content, so it
+     was sitting flush against the top of the viewport, under the fixed bar.
+     Layout only here: never position/height, which belong to .sc-stage. */
+  .rail-stage { display: flex; align-items: center; }
+  /* width is capped by viewport HEIGHT too, or a tall phone on a short window
+     grows past the fold: 2.164 is the device's own aspect. */
+  .rail-item .device { --device-w: min(clamp(13.5rem, 17vw, 22rem), 27vh); }
   .rail__close { width: clamp(16rem, 20vw, 28rem); flex: none; }
   .rail__close p { color: var(--sc-ink-soft); }
-  .rail-item figure {
-    margin: 0; border-radius: var(--sc-r-lg); overflow: clip;
-    box-shadow: var(--sc-e2), var(--sc-edge);
-  }
-  .rail-item img { width: 100%; display: block; }
-  .rail-item figcaption { margin-top: var(--sc-4); }
+  .rail-item figcaption { margin-top: var(--sc-5); text-align: center; }
   .rail-item figcaption b { display: block; font-family: var(--sc-font-display); font-size: var(--sc-t-base); }
   .rail-item figcaption span { color: var(--sc-ink-soft); font-size: var(--sc-t-sm); }
 
@@ -224,9 +265,14 @@
        Below 860px the phone is wide relative to the viewport, so that copy
        lands on top of the screenshot's own busy pixels: a real contrast
        failure the mobile shoot caught, not a cosmetic one. Stack instead. */
-    .hero-stage { flex-direction: column; justify-content: flex-start; padding-top: 6rem; gap: var(--sc-5); }
-    .phone-frame { width: 46vw; }
-    .hero-copy { position: static; max-width: none; text-align: left; padding-inline: var(--sc-gutter); }
+    /* one column below 860px: the copy reads first, the phone sits under it */
+    .hero-stage {
+      grid-template-columns: minmax(0, 1fr);
+      align-content: start; padding-top: 5.5rem; gap: var(--sc-6);
+      justify-items: center;
+    }
+    .hero-stage .device { --device-w: min(15rem, 44vw); order: 2; }
+    .hero-copy { max-width: none; order: 1; justify-self: stretch; }
   }
 </style>
 </head>
@@ -248,15 +294,21 @@
   <!-- 1 · RECOGNITION — pin. The app itself, cold, no preamble. -->
   <section data-sc-act="pin" data-sc-span="2.4" data-sc-drift="#070C18">
     <div data-sc-stage class="hero-stage">
-      <div class="phone-frame">
-        <div class="phone-frame__screen">
-          <img src="assets/hero-home.webp" alt="The BOK app: a text field for your idea, and a Validate button.">
-        </div>
-      </div>
       <div class="hero-copy" data-sc-cue="0 0.78 0">
         <p class="sc-label">AI startup validator</p>
         <h1 class="sc-display" data-sc-kinetic="lines">Every idea deserves an honest verdict.</h1>
         <p class="sc-body">Type it in. BOK tells you build, kill, or pivot, backed by real market and competitor data.</p>
+      </div>
+      <div class="device">
+        <span class="device__btn device__btn--vol" aria-hidden="true"></span>
+        <span class="device__btn device__btn--vol2" aria-hidden="true"></span>
+        <span class="device__btn device__btn--side" aria-hidden="true"></span>
+        <div class="device__bezel">
+          <div class="device__screen">
+            <img src="assets/screen-home.webp" alt="The BOK app open on a phone: a field to describe your app idea, and a Validate button.">
+            <span class="device__glare" aria-hidden="true"></span>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -318,22 +370,22 @@
 
   <!-- 4 · SUBSTANCE — pan. Why it holds up: the real analysis screens. -->
   <section data-sc-act="pan" data-sc-span="4.4" data-sc-drift="#0A1220">
-    <div data-sc-stage>
+    <div data-sc-stage class="rail-stage">
       <div class="rail" data-sc-pan="0.06">
         <div class="rail__lead sc-stack">
           <h2 class="sc-display sc-display--md">Not a guess dressed up.</h2>
           <p class="sc-body">Every verdict comes with the reasoning behind it, in the app, not hidden in a black box.</p>
         </div>
         <article class="rail-item">
-          <figure><img src="assets/screen-verdict.webp" alt="The BOK verdict screen: a 72 out of 100 score and a BUILD recommendation."></figure>
+          <figure><div class="device"><span class="device__btn device__btn--vol" aria-hidden="true"></span><span class="device__btn device__btn--vol2" aria-hidden="true"></span><span class="device__btn device__btn--side" aria-hidden="true"></span><div class="device__bezel"><div class="device__screen"><img src="assets/screen-verdict.webp" alt="The BOK verdict screen: a 72 out of 100 score and a BUILD recommendation."><span class="device__glare" aria-hidden="true"></span></div></div></div></figure>
           <figcaption><b>Verdict.</b><span>Score and recommendation, with the reasoning underneath.</span></figcaption>
         </article>
         <article class="rail-item">
-          <figure><img src="assets/screen-market.webp" alt="The BOK market screen: annual growth, revenue per user, and niche benchmarks."></figure>
+          <figure><div class="device"><span class="device__btn device__btn--vol" aria-hidden="true"></span><span class="device__btn device__btn--vol2" aria-hidden="true"></span><span class="device__btn device__btn--side" aria-hidden="true"></span><div class="device__bezel"><div class="device__screen"><img src="assets/screen-market.webp" alt="The BOK market screen: annual growth, revenue per user, and niche benchmarks."><span class="device__glare" aria-hidden="true"></span></div></div></div></figure>
           <figcaption><b>Market.</b><span>Growth rate, revenue per user, real niche benchmarks.</span></figcaption>
         </article>
         <article class="rail-item">
-          <figure><img src="assets/screen-rivals.webp" alt="The BOK rivals screen: named competitors, their revenue, and the gap in their product."></figure>
+          <figure><div class="device"><span class="device__btn device__btn--vol" aria-hidden="true"></span><span class="device__btn device__btn--vol2" aria-hidden="true"></span><span class="device__btn device__btn--side" aria-hidden="true"></span><div class="device__bezel"><div class="device__screen"><img src="assets/screen-rivals.webp" alt="The BOK rivals screen: named competitors, their revenue, and the gap in their product."><span class="device__glare" aria-hidden="true"></span></div></div></div></figure>
           <figcaption><b>Rivals.</b><span>Who's already close, their revenue, and exactly where they're weak.</span></figcaption>
         </article>
         <div class="rail__close sc-stack">

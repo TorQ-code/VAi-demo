@@ -115,6 +115,28 @@ Four real defects, all caught by the harness or by direct measurement:
 3. **Hero copy failed contrast on mobile** (3.2:1, reported by the 390px
    shoot): absolutely-positioned copy landed on top of the centred phone
    screenshot. The hero now stacks below 860px instead of overlapping.
+5. **The hero copy overlapped the phone**, reported by the human, confirmed by
+   measurement: the copy was absolutely positioned over the stage and ran into
+   the device by 137px at 1100 and 56px at 1280, clearing only at 1440 and then
+   by 16px. That overlay pattern belongs to full-bleed media; a phone is a
+   discrete object. The hero is now a two-column grid, measured at zero overlap
+   from 1024 to 1920, and one column below 860px.
+6. **The phones were not consistent hardware.** The hero had a CSS frame while
+   the analysis screens were raw crops that still carried the simulator's own
+   bezel, so the page showed two different kinds of phone. All four screenshots
+   are now cropped to screen content only, and one `.device` component draws
+   the hardware everywhere: titanium rail, black bezel, inset glass, side
+   buttons, raking glare. Callers set `--device-w`; everything else derives.
+7. **The rail sat flush against the top of the viewport.** The pan stage is
+   100vh but the rail is only as tall as its content, so it was never centred
+   and the phones ran under the fixed bar. The stage centres its rail now, and
+   device width is capped by viewport height as well as width so a short
+   window cannot push the caption past the fold.
+
+Also: the hero screenshot's "Validation failed" error line is covered with the
+input card's own background colour rather than cropped out, so the asset keeps
+the true 1170x2532 phone ratio the device frame needs.
+
 4. **The pan rail had zero horizontal overflow at desktop widths**, measured
    directly. Fixed-rem items summed to exactly the viewport at 1440px and less
    than it at 1920px, which would have parked act 4 as a dead pinned screen on
