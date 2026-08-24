@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BOK · an honest verdict on your idea</title>
+<meta name="description" content="Type your idea. BOK tells you build, kill, or pivot, with real market and competitor analysis, in under a minute.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230A1428'/><text x='16' y='22' font-family='sans-serif' font-weight='700' font-size='15' fill='%2300E5FF' text-anchor='middle'>B</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="scrollcraft.css">
+<style>
+  :root {
+    /* the VAi / BOK brand kit, six roles + two faces */
+    --sc-canvas:      #0A1428;
+    --sc-surface:     #101D3A;
+    --sc-ink:         #F8F9FA;
+    --sc-ink-soft:    #8D9BC2;
+    --sc-accent:      #00E5FF;
+    --sc-accent-ink:  #05131F;
+    --sc-font-display: "Space Grotesk", system-ui, sans-serif;
+    --sc-font-text:    "Manrope", system-ui, sans-serif;
+
+    /* verdict semantics, not page decoration: real product status colours */
+    --verdict-build:  #21E3A0;
+    --verdict-pivot:  #FF4D00;
+    --verdict-kill:   #FF5470;
+  }
+
+  /* ---------------------------------------------------------- nav bar --- */
+  .site-bar {
+    position: fixed; inset: 0 0 auto 0; z-index: var(--sc-z-chrome);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: var(--sc-4) var(--sc-gutter);
+    background: linear-gradient(color-mix(in oklab, var(--sc-canvas) 88%, transparent), transparent);
+    backdrop-filter: blur(6px);
+  }
+  .site-bar__mark { display: flex; align-items: center; gap: var(--sc-2); }
+  .site-bar__mark img { width: 1.9rem; height: 1.9rem; border-radius: var(--sc-r-sm); }
+  .site-bar__mark span {
+    font-family: var(--sc-font-display); font-weight: 600;
+    font-size: var(--sc-t-base); letter-spacing: var(--sc-track-snug);
+  }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--sc-font-display); font-weight: 600;
+    font-size: var(--sc-t-sm); letter-spacing: var(--sc-track-snug);
+    padding: 0.7em 1.3em; border-radius: var(--sc-r-pill);
+    background: var(--sc-accent); color: var(--sc-accent-ink);
+    border: none; cursor: pointer; white-space: nowrap;
+    box-shadow: var(--sc-e1);
+    transition: transform var(--sc-d-fast) var(--sc-ease-out),
+                box-shadow var(--sc-d-fast) var(--sc-ease-out);
+  }
+  .btn:hover { box-shadow: var(--sc-e2); }
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* --------------------------------------------------------- act one --- */
+  .phone-frame {
+    position: relative; width: min(19rem, 62vw); aspect-ratio: 9 / 19.5;
+    border-radius: 2.4rem; padding: 0.45rem;
+    background: linear-gradient(160deg, #2A3554, #0C1424);
+    box-shadow: var(--sc-e3), var(--sc-edge);
+    transform: scale(calc(1 + var(--sc-p, 0) * 0.06));
+    will-change: transform;
+  }
+  .phone-frame__screen {
+    width: 100%; height: 100%; border-radius: 1.95rem; overflow: clip;
+    background: var(--sc-canvas);
+  }
+  .phone-frame__screen img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+  /* NB: these three classes (.hero-stage, .turn-stage, .close) live on the
+     SAME element the engine turns into .sc-stage (position:sticky, height:
+     100vh). Never redeclare position or height here: this stylesheet loads
+     after scrollcraft.css, so a same-specificity class rule here would win
+     the cascade and silently un-stick the pin. Flex layout only. */
+  .hero-stage {
+    display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(120% 90% at 50% 30%, #132242 0%, var(--sc-canvas) 70%);
+  }
+  .hero-copy {
+    position: absolute; left: var(--sc-gutter); bottom: clamp(3rem, 12vh, 8rem);
+    max-width: min(30rem, 78vw); z-index: var(--sc-z-copy);
+  }
+  .hero-copy .sc-label { color: var(--sc-accent); }
+  .hero-copy h1 { margin-top: var(--sc-3); font-size: var(--sc-t-3xl); }
+  @media (max-width: 700px) { .hero-copy h1 { font-size: var(--sc-t-2xl); } }
+  .hero-copy p { margin-top: var(--sc-4); }
+
+  /* -------------------------------------------------------- act two --- */
+  .tension { max-width: 40rem; }
+  .tension p { font-size: var(--sc-t-lg); line-height: 1.5; color: var(--sc-ink); }
+  .tension p + p { margin-top: var(--sc-5); color: var(--sc-ink-soft); font-size: var(--sc-t-base); }
+
+  /* ------------------------------------------------------- act three --- */
+  .turn-stage {
+    display: flex; align-items: center; justify-content: center;
+    padding: var(--sc-gutter);
+    background: radial-gradient(90% 70% at 50% 40%, #16274A 0%, var(--sc-canvas) 68%);
+  }
+  .verdict-card {
+    position: relative; width: min(34rem, 100%);
+    border-radius: var(--sc-r-lg);
+    background: var(--sc-surface);
+    box-shadow: var(--sc-e3), var(--sc-edge);
+    overflow: clip;
+  }
+  .verdict-face { padding: var(--sc-7) var(--sc-6); }
+  .verdict-face__eyebrow { display: flex; align-items: center; justify-content: space-between; }
+  .verdict-face h2 { font-size: var(--sc-t-xl); margin: var(--sc-4) 0 0; }
+  .verdict-face textarea {
+    width: 100%; margin-top: var(--sc-5); min-height: 6.5rem; resize: none;
+    background: color-mix(in oklab, var(--sc-canvas) 70%, transparent);
+    border: 1px solid var(--sc-hairline); border-radius: var(--sc-r-md);
+    padding: var(--sc-4); color: var(--sc-ink); font-size: var(--sc-t-base);
+    line-height: 1.5; font-family: var(--sc-font-text);
+  }
+  .verdict-face textarea::placeholder { color: var(--sc-ink-soft); }
+  .verdict-face textarea:focus-visible { outline: 2px solid var(--sc-accent); outline-offset: 2px; }
+  .verdict-face__row { display: flex; align-items: center; justify-content: space-between; margin-top: var(--sc-4); gap: var(--sc-3); }
+  .verdict-face__hint { color: var(--sc-ink-soft); font-size: var(--sc-t-xs); }
+
+  /* the reveal: our own clip-path wipe, driven by a class toggle, not by
+     data-sc-reveal, because this fires on the visitor's own input, not on
+     scroll progress. Signature move, coded in the page. */
+  .verdict-result {
+    position: absolute; inset: 0; padding: var(--sc-7) var(--sc-6);
+    background: var(--sc-surface);
+    clip-path: inset(0 0 100% 0);
+    transition: clip-path 640ms var(--sc-ease-out);
+    display: flex; flex-direction: column;
+  }
+  .verdict-card.is-revealed .verdict-result { clip-path: inset(0 0 0% 0); }
+  .verdict-card.is-thinking .verdict-face { opacity: 0.35; pointer-events: none; }
+
+  .ring-row { display: flex; align-items: center; gap: var(--sc-5); }
+  .ring { width: 6.5rem; height: 6.5rem; flex: none; }
+  .ring circle { fill: none; stroke-width: 8; }
+  .ring circle.track { stroke: color-mix(in oklab, var(--sc-ink) 14%, transparent); }
+  .ring circle.value {
+    stroke: var(--verdict-color, var(--sc-accent)); stroke-linecap: round;
+    transform: rotate(-90deg); transform-origin: 50% 50%;
+    transition: stroke-dashoffset 900ms var(--sc-ease-out), stroke 300ms;
+  }
+  .ring text { font-family: var(--sc-font-display); font-weight: 700; fill: var(--sc-ink); }
+  .verdict-badge {
+    display: inline-flex; align-items: center; gap: 0.4em; width: fit-content;
+    padding: 0.35em 0.9em; border-radius: var(--sc-r-pill);
+    font-family: var(--sc-font-display); font-weight: 600; font-size: var(--sc-t-sm);
+    color: var(--verdict-color, var(--sc-accent));
+    border: 1px solid color-mix(in oklab, var(--verdict-color, var(--sc-accent)) 55%, transparent);
+    background: color-mix(in oklab, var(--verdict-color, var(--sc-accent)) 14%, transparent);
+  }
+  .verdict-line { margin-top: var(--sc-4); color: var(--sc-ink); }
+  .verdict-foot {
+    margin-top: auto; padding-top: var(--sc-5); border-top: 1px solid var(--sc-hairline);
+    display: flex; align-items: center; justify-content: space-between; gap: var(--sc-3);
+  }
+  .verdict-foot p { color: var(--sc-ink-soft); font-size: var(--sc-t-xs); max-width: 24ch; }
+  .ghost-btn {
+    font-family: var(--sc-font-display); font-weight: 600; font-size: var(--sc-t-sm);
+    background: none; border: 1px solid var(--sc-hairline-strong); color: var(--sc-ink);
+    border-radius: var(--sc-r-pill); padding: 0.6em 1.1em; cursor: pointer;
+    transition: border-color var(--sc-d-fast);
+  }
+  .ghost-btn:hover { border-color: var(--sc-accent); }
+  .thinking-dots { display: inline-flex; gap: 0.3em; }
+  .thinking-dots span {
+    width: 0.4em; height: 0.4em; border-radius: 50%; background: var(--sc-accent);
+    opacity: 0.35; animation: think 1.1s ease-in-out infinite;
+  }
+  .thinking-dots span:nth-child(2) { animation-delay: 0.15s; }
+  .thinking-dots span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes think { 0%, 80%, 100% { opacity: 0.25; } 40% { opacity: 1; } }
+  .is-thinking-flag { position: absolute; top: var(--sc-4); right: var(--sc-6); display: none; align-items: center; gap: var(--sc-2); color: var(--sc-ink-soft); font-size: var(--sc-t-xs); }
+  .verdict-card.is-thinking .is-thinking-flag { display: inline-flex; }
+
+  /* -------------------------------------------------------- act four --- */
+  /* Widths are viewport-relative with a floor and a high ceiling, not fixed
+     rem: fixed widths measured 0 overflow at 1440px and NEGATIVE at 1920px
+     (content narrower than the viewport it needs to overflow), which parks
+     this whole act as a dead pinned screen on an ordinary wide monitor.
+     devices.md's own warning: the harness does not catch this, only a
+     direct scrollWidth measurement does. */
+  .rail { gap: var(--sc-6); padding-inline: var(--sc-gutter); align-items: center; }
+  .rail__lead { width: clamp(20rem, 24vw, 32rem); flex: none; padding-right: var(--sc-6); }
+  .rail-item { width: clamp(17rem, 22vw, 30rem); flex: none; }
+  .rail__close { width: clamp(16rem, 20vw, 28rem); flex: none; }
+  .rail__close p { color: var(--sc-ink-soft); }
+  .rail-item figure {
+    margin: 0; border-radius: var(--sc-r-lg); overflow: clip;
+    box-shadow: var(--sc-e2), var(--sc-edge);
+  }
+  .rail-item img { width: 100%; display: block; }
+  .rail-item figcaption { margin-top: var(--sc-4); }
+  .rail-item figcaption b { display: block; font-family: var(--sc-font-display); font-size: var(--sc-t-base); }
+  .rail-item figcaption span { color: var(--sc-ink-soft); font-size: var(--sc-t-sm); }
+
+  /* -------------------------------------------------------- act five --- */
+  .close { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: var(--sc-gutter); }
+  .close__inner { max-width: 34rem; }
+  .close h2 { font-size: var(--sc-t-3xl); }
+  .close .cta { margin-top: var(--sc-6); }
+  .close-form { margin-top: var(--sc-6); display: flex; flex-direction: column; align-items: center; gap: var(--sc-3); }
+  .close-note { color: var(--sc-ink-soft); font-size: var(--sc-t-sm); min-height: 1.4em; }
+  .foot { position: absolute; inset: auto 0 0 0; padding: var(--sc-5) var(--sc-gutter); display: flex; align-items: center; justify-content: space-between; }
+  .foot img { width: 1.4rem; height: 1.4rem; border-radius: var(--sc-r-sm); opacity: 0.85; }
+  .foot small { color: var(--sc-ink-soft); font-size: var(--sc-t-xs); }
+
+  @media (max-width: 860px) {
+    .rail__lead { width: 15rem; }
+    .rail-item { width: 13.5rem; }
+    .verdict-face { padding: var(--sc-6) var(--sc-5); }
+    .verdict-result { padding: var(--sc-6) var(--sc-5); }
+
+    /* The desktop hero overlays copy on the lower-left of a centred phone.
+       Below 860px the phone is wide relative to the viewport, so that copy
+       lands on top of the screenshot's own busy pixels: a real contrast
+       failure the mobile shoot caught, not a cosmetic one. Stack instead. */
+    .hero-stage { flex-direction: column; justify-content: flex-start; padding-top: 6rem; gap: var(--sc-5); }
+    .phone-frame { width: 46vw; }
+    .hero-copy { position: static; max-width: none; text-align: left; padding-inline: var(--sc-gutter); }
+  }
+</style>
+</head>
+<body>
+
+<span data-sc-progress></span>
+<div class="sc-grain" aria-hidden="true"></div>
+
+<header class="site-bar">
+  <a class="site-bar__mark" href="#top" aria-label="BOK">
+    <img src="assets/bok-icon.webp" alt="">
+    <span>BOK</span>
+  </a>
+  <a class="btn" href="#join">Reserve your spot</a>
+</header>
+
+<main id="top">
+
+  <!-- 1 · RECOGNITION — pin. The app itself, cold, no preamble. -->
+  <section data-sc-act="pin" data-sc-span="2.4" data-sc-drift="#070C18">
+    <div data-sc-stage class="hero-stage">
+      <div class="phone-frame">
+        <div class="phone-frame__screen">
+          <img src="assets/hero-home.webp" alt="The BOK app: a text field for your idea, and a Validate button.">
+        </div>
+      </div>
+      <div class="hero-copy" data-sc-cue="0 0.78 0">
+        <p class="sc-label">AI startup validator</p>
+        <h1 class="sc-display" data-sc-kinetic="lines">Every idea deserves an honest verdict.</h1>
+        <p class="sc-body">Type it in. BOK tells you build, kill, or pivot, backed by real market and competitor data.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · TENSION — flow. Quiet. The silence in front of the peak. -->
+  <section class="sc-section" data-sc-act="flow" data-sc-drift="#0A1428">
+    <div class="sc-wrap">
+      <div class="tension" data-sc-in data-sc-stagger="70">
+        <p>Most ideas do not die from being bad. They die from being guessed at.</p>
+        <p>No market check. No look at who already tried it, and why it didn't work. Just nights and weekends spent building, on a hunch, until the hunch runs out.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · TURN — pin, holding the frame while the visitor interacts. The
+       signature move: real input, a real (transparent, labelled) heuristic,
+       our own clip-path wipe to the result. Not scroll-driven; the visitor's
+       own action drives it, which is the point. -->
+  <section id="try" data-sc-act="pin" data-sc-span="3.6" data-sc-drift="#0D1B33">
+    <div data-sc-stage class="turn-stage">
+      <div class="verdict-card" id="verdictCard">
+        <div class="is-thinking-flag"><span class="thinking-dots"><span></span><span></span><span></span></span> reading it</div>
+
+        <div class="verdict-face">
+          <div class="verdict-face__eyebrow">
+            <p class="sc-label">Try it on your own idea</p>
+          </div>
+          <h2 class="sc-display">What are you thinking of building?</h2>
+          <textarea id="ideaInput" maxlength="280"
+            placeholder="A route-planning app for mobile dog groomers, with GPS eta texts and per-dog service history."></textarea>
+          <div class="verdict-face__row">
+            <span class="verdict-face__hint" id="charHint">0 / 280</span>
+            <button class="btn" id="validateBtn" type="button" disabled>Validate</button>
+          </div>
+        </div>
+
+        <div class="verdict-result" id="verdictResult">
+          <div class="ring-row">
+            <svg class="ring" viewBox="0 0 100 100" aria-hidden="true">
+              <circle class="track" cx="50" cy="50" r="42"></circle>
+              <circle class="value" id="ringValue" cx="50" cy="50" r="42"
+                      stroke-dasharray="263.9" stroke-dashoffset="263.9"></circle>
+              <text x="50" y="47" text-anchor="middle" font-size="26" id="ringScore">0</text>
+              <text x="50" y="66" text-anchor="middle" font-size="9" fill="var(--sc-ink-soft)">/ 100</text>
+            </svg>
+            <div>
+              <span class="verdict-badge" id="verdictBadge">—</span>
+              <p class="verdict-line" id="verdictLine"></p>
+            </div>
+          </div>
+          <div class="verdict-foot">
+            <p>Quick read, for fun, a simple heuristic run in your browser. The real 60-second analysis checks live market and competitor data after launch.</p>
+            <button class="ghost-btn" id="againBtn" type="button">Try another</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · SUBSTANCE — pan. Why it holds up: the real analysis screens. -->
+  <section data-sc-act="pan" data-sc-span="4.4" data-sc-drift="#0A1220">
+    <div data-sc-stage>
+      <div class="rail" data-sc-pan="0.06">
+        <div class="rail__lead sc-stack">
+          <h2 class="sc-display sc-display--md">Not a guess dressed up.</h2>
+          <p class="sc-body">Every verdict comes with the reasoning behind it, in the app, not hidden in a black box.</p>
+        </div>
+        <article class="rail-item">
+          <figure><img src="assets/screen-verdict.webp" alt="The BOK verdict screen: a 72 out of 100 score and a BUILD recommendation."></figure>
+          <figcaption><b>Verdict.</b><span>Score and recommendation, with the reasoning underneath.</span></figcaption>
+        </article>
+        <article class="rail-item">
+          <figure><img src="assets/screen-market.webp" alt="The BOK market screen: annual growth, revenue per user, and niche benchmarks."></figure>
+          <figcaption><b>Market.</b><span>Growth rate, revenue per user, real niche benchmarks.</span></figcaption>
+        </article>
+        <article class="rail-item">
+          <figure><img src="assets/screen-rivals.webp" alt="The BOK rivals screen: named competitors, their revenue, and the gap in their product."></figure>
+          <figcaption><b>Rivals.</b><span>Who's already close, their revenue, and exactly where they're weak.</span></figcaption>
+        </article>
+        <div class="rail__close sc-stack">
+          <h3 class="sc-display sc-display--md">And a roadmap.</h3>
+          <p class="sc-body">Pricing tiers, the 90-day build plan, the risks worth knowing before you start.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · COMMITMENT — pin, short, resolves. Last element on the page. -->
+  <section id="join" data-sc-act="pin" data-sc-span="1.2" data-sc-drift="#060A14">
+    <div data-sc-stage class="close" data-sc-spotlight>
+      <div class="close__inner">
+        <h2 class="sc-display" data-sc-cue="0.06" data-sc-kinetic="lines">Get first access when BOK opens up.</h2>
+        <div class="close-form">
+          <a class="btn cta" href="#try" data-sc-magnet="0.26" data-sc-cue="0.06" data-sc-rise="0" id="reserveBtn">Reserve your spot</a>
+          <p class="close-note" id="reserveNote"></p>
+        </div>
+      </div>
+      <footer class="foot">
+        <a class="site-bar__mark" href="#top" aria-label="BOK"><img src="assets/bok-icon.webp" alt=""><small>BOK · AI Startup Validator</small></a>
+        <small>Pre-launch preview</small>
+      </footer>
+    </div>
+  </section>
+
+</main>
+
+<script src="scrollcraft.js"></script>
+<script>
+  ScrollCraft.mount(document.body);
+
+  // ---- Signature move: a real, transparent, in-browser heuristic. --------
+  // Not the real product's AI backend (that runs server-side against live
+  // market data). This is a small, honestly-labelled preview so a visitor's
+  // OWN idea gets a real, if rough, reaction, rather than a canned demo.
+  (function () {
+    var input = document.getElementById('ideaInput');
+    var hint = document.getElementById('charHint');
+    var btn = document.getElementById('validateBtn');
+    var again = document.getElementById('againBtn');
+    var card = document.getElementById('verdictCard');
+    var ring = document.getElementById('ringValue');
+    var ringScore = document.getElementById('ringScore');
+    var badge = document.getElementById('verdictBadge');
+    var line = document.getElementById('verdictLine');
+    var CIRC = 263.9;
+
+    var BUZZ = /(revolutioniz|game.?chang|next.?gen|disrupt|synerg|uber for|seamless|unleash)/i;
+    var AUDIENCE = /\bfor\s+[a-z]/i;
+    var NUMBERS = /[\$%]|\b\d+([kKmM]|,\d{3})?\b/;
+
+    function score(text) {
+      var words = text.trim().split(/\s+/).filter(Boolean);
+      var s = 44;
+      s += Math.min(words.length, 34) * 0.7;
+      if (AUDIENCE.test(text)) s += 9;
+      if (NUMBERS.test(text)) s += 7;
+      var buzz = text.match(BUZZ);
+      if (buzz) s -= 14;
+      if (words.length < 8) s -= 10;
+      s = Math.max(18, Math.min(94, Math.round(s)));
+
+      var verdict, color, reason;
+      if (s >= 68) {
+        verdict = 'BUILD'; color = 'var(--verdict-build)';
+        reason = AUDIENCE.test(text)
+          ? 'Specific enough to picture a first customer. That is most of the work.'
+          : 'Reads specific. Name exactly who this is for and it gets stronger.';
+      } else if (s >= 46) {
+        verdict = 'PIVOT'; color = 'var(--verdict-pivot)';
+        reason = buzz
+          ? 'The pitch leans on buzzwords. What is the actual mechanism, in one sentence?'
+          : 'There is something here, but it reads generic. Narrow it to one kind of user.';
+      } else {
+        verdict = 'KILL'; color = 'var(--verdict-kill)';
+        reason = words.length < 8
+          ? 'Too short to judge. A real teardown needs a real sentence.'
+          : 'As written, this could be five different products. Pick one.';
+      }
+      return { score: s, verdict: verdict, color: color, reason: reason };
+    }
+
+    input.addEventListener('input', function () {
+      hint.textContent = input.value.length + ' / 280';
+      btn.disabled = input.value.trim().length < 4;
+    });
+
+    function runValidate() {
+      if (btn.disabled) return;
+      var result = score(input.value);
+      card.classList.add('is-thinking');
+      window.setTimeout(function () {
+        card.classList.remove('is-thinking');
+        card.style.setProperty('--verdict-color', result.color);
+        ring.style.strokeDashoffset = String(CIRC - (CIRC * result.score / 100));
+        ringScore.textContent = result.score;
+        badge.textContent = result.verdict;
+        line.textContent = result.reason;
+        card.classList.add('is-revealed');
+      }, 750);
+    }
+
+    btn.addEventListener('click', runValidate);
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) runValidate();
+    });
+    again.addEventListener('click', function () {
+      card.classList.remove('is-revealed');
+      input.value = '';
+      hint.textContent = '0 / 280';
+      btn.disabled = true;
+      input.focus();
+    });
+  })();
+
+  // ---- Close CTA: local-only demo confirmation, no backend wired up. -----
+  (function () {
+    var btn = document.getElementById('reserveBtn');
+    var note = document.getElementById('reserveNote');
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      note.textContent = "You're on the list. (Preview build, nothing sent anywhere yet.)";
+      btn.setAttribute('aria-disabled', 'true');
+    });
+  })();
+</script>
+</body>
+</html>
