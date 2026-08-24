@@ -91,7 +91,7 @@ backend.
 
 | Beat | Device | Span | Why this one |
 |---|---|---|---|
-| Curiosity | `pin` | 2.4 | The product first. A CSS phone frame scaling from `--sc-p` so the app arrives rather than sits |
+| Curiosity | `pin` | 2.4 | The product first, in the shared `.device` frame, scaling from `--sc-p` so the app arrives rather than sits |
 | Unease | `flow` | — | Plain document rhythm. The page stops performing for one beat, which is what makes the next one land |
 | Recognition | `pin` + bespoke | 3.6 | The frame has to hold still while the visitor types. Longest span on the page |
 | Confidence | `pan` | 4.4 | Lateral travel reads as breadth. Four real screens as evidence |
@@ -103,7 +103,9 @@ exists, and faking one would have meant generating a fake product). Total
 
 ## What verification found and what changed
 
-Four real defects, all caught by the harness or by direct measurement:
+Seven real defects. Four were caught by the harness or by direct measurement
+before review; three more came from the human's read of the built page, which
+is the check no harness performs.
 
 1. **Wrong hero asset.** `hero-home.webp` was the Market tab, not the home
    screen. Replaced with the real input screen.
@@ -115,6 +117,15 @@ Four real defects, all caught by the harness or by direct measurement:
 3. **Hero copy failed contrast on mobile** (3.2:1, reported by the 390px
    shoot): absolutely-positioned copy landed on top of the centred phone
    screenshot. The hero now stacks below 860px instead of overlapping.
+4. **The pan rail had zero horizontal overflow at desktop widths**, measured
+   directly. Fixed-rem items summed to exactly the viewport at 1440px and less
+   than it at 1920px, which would have parked act 4 as a dead pinned screen on
+   an ordinary monitor. The harness reported "no dead scroll" on every pass, as
+   devices.md warns it would. Widths are now viewport-relative and measured
+   positive at 1280, 1440, 1920 and 390.
+
+Then, from the human's review of the page itself:
+
 5. **The hero copy overlapped the phone**, reported by the human, confirmed by
    measurement: the copy was absolutely positioned over the stage and ran into
    the device by 137px at 1100 and 56px at 1280, clearing only at 1440 and then
@@ -137,12 +148,10 @@ Also: the hero screenshot's "Validation failed" error line is covered with the
 input card's own background colour rather than cropped out, so the asset keeps
 the true 1170x2532 phone ratio the device frame needs.
 
-4. **The pan rail had zero horizontal overflow at desktop widths**, measured
-   directly. Fixed-rem items summed to exactly the viewport at 1440px and less
-   than it at 1920px, which would have parked act 4 as a dead pinned screen on
-   an ordinary monitor. The harness reported "no dead scroll" on every pass, as
-   devices.md warns it would. Widths are now viewport-relative and measured
-   positive at 1280, 1440, 1920 and 390.
+The lesson worth keeping: every defect in 5 to 7 was visible in the contact
+sheets I had already looked at and called clean. The harness measures contrast,
+dead scroll and clip decoding, and it passed all three the whole time. It has
+no opinion on whether a page looks professional.
 
 ## Feel check
 
