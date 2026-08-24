@@ -62,10 +62,37 @@ live for these visitors — the single action is committing ahead of launch
 - CTA label: something in the pre-order/reserve family — exact wording still
   open (see below).
 
-**Still open, needs the human:**
-- Exact CTA label/wording (e.g. "Pre-order," "Reserve your spot," "Get
-  early access") and any real pre-order mechanism (price? waitlist? date?).
-- One-sentence belief statement to confirm/refine.
+**Confirmed by human:**
+- CTA label, used everywhere on the page: **"Reserve your spot."**
+- Belief to install: *"This will actually tell me the truth about my idea,
+  and I want to be first in line for it."*
+
+## The journey (Step 1)
+
+Five beats, built from interview answer 2 ("the app on a phone, description,
+app working") expanded to carry a belief and end on the confirmed CTA:
+
+```
+1  Recognition   the app itself, on a phone — no preamble, the product first
+2  Tension       what it costs to build on an idea nobody's stress-tested
+3  Turn          the app working: an idea goes in, a real BUILD/KILL/PIVOT
+                 verdict comes out — the moment the promise becomes visible
+4  Substance     why the verdict holds up — real market/competitor/roadmap
+                 analysis, not a vibe check (Money/Build tab material)
+5  Commitment    reserve your spot — the one action, pre-launch
+```
+
+Beat 3 is the peak candidate: it's where "the app" (interview Q4) and "make
+you want to use it" (Q5, the signature-move seed) converge.
+
+**Open asset question, not yet answered by the human:** beat 3 needs the app
+visibly working. The source repo has real static screenshots but no screen
+recording of the app running live. Two ways to get a true "it's working"
+moment without inventing a fake product: (a) the human supplies a real screen
+capture, or (b) build the sequence from the real screenshots themselves
+(idea-input → analysis → verdict reveal), driven by scroll/CSS rather than
+generated video. Defaulting to (b) — real assets, no synthetic app UI, no
+kie.ai spend — unless told otherwise.
 
 ## Feeling curve, peak, tell-someone sentence, silence
 
