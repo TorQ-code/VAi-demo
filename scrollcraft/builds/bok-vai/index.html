@@ -58,8 +58,13 @@
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
   /* --------------------------------------------------------- act one --- */
+  /* aspect matches the hero screenshot's own crop (780x1490). The source
+     capture had a "Validation failed" error line under the Validate button,
+     which is the last thing a validator's hero should show, so the asset is
+     cropped above it and the frame matches that crop rather than cover-
+     cropping the card's edges away. */
   .phone-frame {
-    position: relative; width: min(19rem, 62vw); aspect-ratio: 9 / 19.5;
+    position: relative; width: min(19rem, 62vw); aspect-ratio: 780 / 1490;
     border-radius: 2.4rem; padding: 0.45rem;
     background: linear-gradient(160deg, #2A3554, #0C1424);
     box-shadow: var(--sc-e3), var(--sc-edge);
