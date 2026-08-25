@@ -148,6 +148,19 @@ Also: the hero screenshot's "Validation failed" error line is covered with the
 input card's own background colour rather than cropped out, so the asset keeps
 the true 1170x2532 phone ratio the device frame needs.
 
+8. **The hero spilled past its own 100vh stage in short windows**, reported by
+   the human as the page "only scrolling to one". Measured: 239px of overflow
+   at 700x600, 186px at 860x700, 84px at 500x700. The phone cut itself off at
+   the fold and the hero read as the whole page. Present in the pre-review
+   build too, so it predates the device work. Three causes, all fixed: the
+   device width had no viewport-height term, the h1 was a fixed 3xl that
+   wrapped to five lines in a short window, and the stacked one-column layout
+   was gated on width alone when stacking is exactly what does not fit when
+   height is scarce. Device and heading are now capped by vh, and stacking
+   requires `min-height: 720px`; below that the hero stays two-column and
+   shrinks. Swept 12 viewports from 390x844 to 1920x1080: zero spill, zero
+   overlap, zero top-cut, and the full 12.1vh reachable at every one.
+
 The lesson worth keeping: every defect in 5 to 7 was visible in the contact
 sheets I had already looked at and called clean. The harness measures contrast,
 dead scroll and clip decoding, and it passed all three the whole time. It has

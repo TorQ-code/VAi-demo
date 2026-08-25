@@ -118,8 +118,12 @@
     padding-inline: var(--sc-gutter);
     background: radial-gradient(120% 90% at 64% 34%, #142544 0%, var(--sc-canvas) 68%);
   }
+  /* 32vh keeps the device (2.164x its width) under ~70vh, so the hero always
+     fits inside its own 100vh stage. Without the vh term the phone spilled
+     239px past the stage at 700x600 and 186px at 860x700, cutting itself off
+     and making the page look like it ended. */
   .hero-stage .device {
-    --device-w: min(18.5rem, 32vw); justify-self: center;
+    --device-w: min(18.5rem, 32vw, 32vh); justify-self: center;
     transform: scale(calc(1 + var(--sc-p, 0) * 0.05)); will-change: transform;
   }
   /* The copy was absolutely positioned over the stage, which overlapped the
@@ -128,8 +132,12 @@
      column instead of an overlay. */
   .hero-copy { max-width: 34rem; z-index: var(--sc-z-copy); }
   .hero-copy .sc-label { color: var(--sc-accent); }
-  .hero-copy h1 { margin-top: var(--sc-3); font-size: var(--sc-t-3xl); }
-  @media (max-width: 700px) { .hero-copy h1 { font-size: var(--sc-t-2xl); } }
+  /* fluid, and capped by viewport height too: a fixed 3xl wrapped to five
+     lines in a short window and pushed the phone off the stage. */
+  .hero-copy h1 {
+    margin-top: var(--sc-3);
+    font-size: min(var(--sc-t-3xl), clamp(1.9rem, 3.6vw + 0.6rem, 4rem), 8.5vh);
+  }
   .hero-copy p { margin-top: var(--sc-4); }
 
   /* -------------------------------------------------------- act two --- */
@@ -255,7 +263,19 @@
   .foot img { width: 1.4rem; height: 1.4rem; border-radius: var(--sc-r-sm); opacity: 0.85; }
   .foot small { color: var(--sc-ink-soft); font-size: var(--sc-t-xs); }
 
-  @media (max-width: 860px) {
+  /* Narrow AND short (a preview panel, a landscape phone): stacking cannot
+     fit copy + phone in 100vh, so stay side by side and let the phone shrink
+     to whatever height is left. */
+  @media (max-width: 860px) and (max-height: 719px) {
+    .hero-stage {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+      gap: var(--sc-5);
+    }
+    .hero-stage .device { --device-w: min(11rem, 30vw, 30vh); }
+    .hero-copy p { font-size: var(--sc-t-sm); }
+  }
+
+  @media (max-width: 860px) and (min-height: 720px) {
     .rail__lead { width: 15rem; }
     .rail-item { width: 13.5rem; }
     .verdict-face { padding: var(--sc-6) var(--sc-5); }
@@ -265,7 +285,11 @@
        Below 860px the phone is wide relative to the viewport, so that copy
        lands on top of the screenshot's own busy pixels: a real contrast
        failure the mobile shoot caught, not a cosmetic one. Stack instead. */
-    /* one column below 860px: the copy reads first, the phone sits under it */
+    /* one column below 860px: the copy reads first, the phone sits under it.
+       Gated on min-height too: stacking needs vertical room, and in a short
+       window (a preview panel, a landscape phone) the two-column hero is the
+       one that fits. See the @media (max-width:860px) and (max-height:719px)
+       rule further down. */
     .hero-stage {
       grid-template-columns: minmax(0, 1fr);
       align-content: start; padding-top: 5.5rem; gap: var(--sc-6);
