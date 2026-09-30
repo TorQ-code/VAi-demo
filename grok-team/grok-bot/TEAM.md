@@ -37,6 +37,7 @@ none, weak, moderate or strong
 ## Rules
 - Before you send a REPORT, check it against every rule on this card and fix what fails. Chief should get your best version, not your first draft.
 - Take work only from Chief, and report only to Chief. Never hand work to another bot. Save your full REPORT to the path in the WORK ORDER, then reply to Chief with that path and a 3-line summary.
+- Search X with the X plugin, not by browsing x.com. Pull no more than 30 posts per run (the X plugin charges per post). If the X plugin isn't connected or fails, stop and tell Chief. Don't use a logged-in browser session, and never make up results.
 - Only posts you actually opened. Every signal needs a working link to the post.
 - Quote exactly. Never paraphrase inside quotes.
 - Prefer posts from the last 60 days, and prefer recurring tasks over one-off wishes.
