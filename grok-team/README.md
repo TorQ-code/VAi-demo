@@ -1,35 +1,48 @@
-# 🧠 Grok War Room
+# 🧠 Grok Bot Forge
 
-**One startup idea in. A team of bots. Receipts out.**
+**Which Grok Bot should you build? The team finds out, then builds it.**
 
-Grok Chief is a manager bot. It takes a raw startup idea, writes a mission brief, and hands out work to five specialist bots. It reviews each deliverable against a rubric and **sends weak or made-up work back**. At the end it gives a **BUILD / PIVOT / KILL** verdict, backed by real posts on X and checked by a code-based Auditor.
+xAI's **Grok Bot Template Rewards** pays creators based on how many people use their template **and how consistently they keep using it**. So the hard part isn't building *a* bot. It's knowing **which** bot people will use every day, and designing it so they come back.
 
-Most "AI idea validators" give you opinions. This one gives you **evidence and a list of real people already asking for the product**.
+Give Grok Chief a problem, a bot idea, or just an audience ("freelancers"). The team:
+1. finds recurring chores people complain about on X (with receipts),
+2. checks which templates, GPTs and automations already exist,
+3. ranks the candidates on **verified** demand,
+4. designs the winner **field by field for the Grok Bot builder**: name, title, character (shape and color), instructions, routines and notifications,
+5. red-teams the design and merges guardrails into the instructions,
+6. scores repeat use, and
+7. writes the launch kit.
+
+The verdict is **BUILD THIS / REWORK / SKIP**.
 
 ## The team
 
 | Bot | Job | Skills and tools |
 |---|---|---|
-| 🧠 **Grok Chief** (Chief of Staff) | Plans the mission, writes each bot's assignment, reviews every deliverable, sends work back, and makes the final call | planning, delegation, quality review |
-| 🛰️ **Scout** (X Pain Hunter) | Finds real people on X complaining about this exact problem recently, with verbatim quotes and links | `x_search` (Grok's live X search) |
-| 🌐 **Recon** (Competitive Intel) | Finds existing competitors, their published prices, and the weakness users complain about most | `web_search` |
-| 🔪 **Skeptic** (Red Team) | Builds the strongest honest case to kill the idea, using the team's own evidence, and designs a test that takes under 48 hours and costs under $100 | pre-mortem |
-| 📐 **Architect** (MVP Scoper) | Cuts the idea to at most 5 features, a 14-day plan, and one success number | ruthless scoping |
-| 📣 **Closer** (Go-To-Market) | Writes landing copy and a **first-customers list built from the people Scout found**, with reply drafts for a human to send | copy, outreach |
-| 🧾 **Auditor** (Receipts Officer) | Checks that every cited link was actually returned by a search tool. It is plain code, not an LLM, so it can't be talked into anything | hallucination gate |
+| 🧠 **Grok Chief** (Chief of Staff) | Picks Discover or Forge mode, writes the assignments, ranks candidates, sends back weak work, and makes the final call | planning, ranking, review |
+| 🛰️ **Scout** (Demand Hunter) | Finds people on X describing a task they repeat daily or weekly. Recurring pain is what makes a bot a habit | `x_search` |
+| 🌐 **Recon** (Template Market) | Checks existing Grok Bot templates, GPTs, Zapier recipes and apps, and where each falls short | `web_search` |
+| 📐 **Architect** (Bot Designer) | Designs the Bot Card exactly as the builder asks for it | instructions, routines |
+| 🔪 **Red Team** (Trust & Safety) | Least-privilege access, prompt injection, spam and X rules. Its guardrail lines are merged into the instructions | security review |
+| 📣 **Closer** (Launch) | Template listing, launch post, try-it prompts, a 30-second demo script, and replies to people already asking (a human sends them) | copy, adoption |
+| 🔁 **Habit Scorer** · *code* | A transparent repeat-use score: every point has a reason | retention model |
+| 🧾 **Auditor** · *code* | Checks every cited link against what the search tools actually returned | hallucination gate |
 
-## How the Chief manages the team
+## Rules the Chief enforces
 
-1. **Plan.** Grok Chief restates the idea sharply, names the customer and the pain, writes the X and web search queries, and writes a specific assignment for each bot.
-2. **Delegate in waves.** Scout and Recon run in parallel. Skeptic, Architect and Closer then run in parallel on top of their evidence.
-3. **Review and send back.** Every deliverable is checked against a JSON contract and a rubric. Work is sent back with the specific problems listed (one revision by default) when:
-   - Scout cites a post the `x_search` tool never returned (a fabricated receipt)
-   - Closer lists a "customer" who isn't in Scout's verified signals (an invented person)
-   - Architect goes over 5 features, or gives a success metric without a number
-4. **Audit.** The Auditor scores the dossier as the percentage of cited links that a search tool actually returned.
-5. **Decide, with guardrails.** The Chief can't approve BUILD on vibes. With fewer than 3 verified pain signals, **BUILD is downgraded to PIVOT** and confidence is capped at 45%. A receipts score below 50% caps confidence at 40%.
+**Sent back to the bot for revision:**
+- A link the search tool never returned
+- A bot that can send, post, pay, book or delete **without an "ask me first" rule**
+- No recurring routine (repeat use is what gets paid)
+- A shape or color the builder doesn't offer
+- Instructions outside 150-700 words, or missing the Role or Rules section
+- A reply aimed at someone who isn't in Scout's verified signals
 
-Other guardrails: a call budget for each mission (16 calls by default), X and web content treated as untrusted data in every prompt (to resist prompt injection), and **no auto-posting**. Bots write the drafts, and a human sends them.
+**Scored by code:**
+- **Forge Score** ranks candidates on demand × gap × frequency. Proof counts only if the Auditor verified it: 0 receipts earns 25%, and 3 or more earns 100%.
+- **Habit score:** daily routine +40, weekdays +38, weekly +28, notifications +15, first-run quick win +15, ends in a digest +10, asks before acting +10, and −10 if it needs 4 or more connected apps.
+
+**Gates the Chief can't overrule:** BUILD THIS needs 3 or more verified demand signals, a habit score of 50 or more, a Red Team rating other than "unsafe", and no open design flags. Otherwise it's downgraded to REWORK.
 
 ## Run it
 
@@ -37,34 +50,36 @@ Requires Node 18+. There are no dependencies.
 
 ```bash
 cd grok-team
-npm run demo                     # offline demo with simulated data → http://localhost:3000
-XAI_API_KEY=xai-... npm start    # live, using Grok with x_search and web_search
-node cli.js "shift-swap app for nurses"   # terminal version; saves a Markdown dossier
+npm run demo                      # offline demo with simulated data → http://localhost:3000
+XAI_API_KEY=xai-... npm start     # live, using Grok with x_search and web_search
+node cli.js "small landlords"     # terminal version; saves a Markdown Bot Card
 npm test
 ```
 
-The demo mode includes two deliberate bot mistakes, a fabricated X link and an invented customer, so you can watch the Chief catch both of them live.
+In demo mode the Chief catches two planted mistakes (a fabricated X link, and a bot that would reply to email without asking), and the Red Team merges three guardrails.
+
+**No code?** [`grok-bot/chief.md`](grok-bot/chief.md) has paste-ready instructions and routines that run the same process inside a single Grok Bot called "Chief". It's a shareable template in its own right.
 
 | Env var | Default | |
 |---|---|---|
 | `XAI_API_KEY` | none | If unset, the app runs in demo mode |
 | `GROK_MODEL` | `grok-4.5` | The Chief's model |
-| `GROK_WORKER_MODEL` | same as `GROK_MODEL` | Use a cheaper or faster model for the workers |
-| `MAX_CALLS` | `16` | Model-call budget for each mission |
-| `PORT` | `3000` | |
+| `GROK_WORKER_MODEL` | same as `GROK_MODEL` | |
+| `MAX_CALLS` | `18` | Model-call budget for each run |
 
-It uses xAI's Responses API (`POST /v1/responses`) with the server-side `x_search` and `web_search` tools. Citations come back from the API, and that is what the Auditor checks links against.
+It uses xAI's Responses API (`POST /v1/responses`) with the server-side `x_search` and `web_search` tools.
 
 ## Layout
 
 ```
-server.js         HTTP + Server-Sent Events (live war-room stream)
-cli.js            terminal runner
-src/chief.js      the manager: plan → waves → review loop → audit → verdict + evidence gate
-src/team.js       bot roster: jobs, tools, JSON contracts, rubrics, validators
-src/receipts.js   Auditor: URL normalisation, citation matching, scoring
-src/grok.js       xAI Responses API client (retries, timeouts, citation extraction)
-src/mock.js       offline demo client
-src/report.js     Markdown dossier
-public/index.html the war-room UI
+server.js           HTTP + Server-Sent Events (live comms feed)
+cli.js              terminal runner
+src/chief.js        plan → Scout+Recon → rank → Architect → Red Team → merge → Closer+Habit → audit → verdict
+src/team.js         roster, Bot Card format (shapes, colors, frequencies), approval rules, habit score
+src/receipts.js     Auditor
+src/grok.js         xAI Responses API client
+src/mock.js         offline demo client
+src/report.js       Markdown Bot Card + dossier
+public/index.html   the UI (the Bot Card mirrors the Grok Bot builder)
+grok-bot/chief.md   the whole Forge as one paste-in Grok Bot
 ```

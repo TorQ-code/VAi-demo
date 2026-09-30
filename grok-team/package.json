@@ -1,7 +1,7 @@
 {
-  "name": "grok-war-room",
+  "name": "grok-bot-forge",
   "version": "1.0.0",
-  "description": "A Grok Chief bot that runs a team of specialist bots to validate a startup idea with real receipts from X.",
+  "description": "Grok Chief runs a team of bots that finds which Grok Bot is worth building, then designs it as a paste-ready Bot Card with a launch kit.",
   "type": "module",
   "engines": { "node": ">=18" },
   "scripts": {

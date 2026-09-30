@@ -7,6 +7,6 @@ export function loadConfig(env = process.env) {
     demo,
     client: demo ? createMockClient() : createGrokClient({ apiKey: env.XAI_API_KEY, baseUrl: env.XAI_BASE_URL || undefined }),
     models: { chief: env.GROK_MODEL || 'grok-4.5', worker: env.GROK_WORKER_MODEL || env.GROK_MODEL || 'grok-4.5' },
-    maxCalls: Number(env.MAX_CALLS) || 16,
+    maxCalls: Number(env.MAX_CALLS) || 18,
   };
 }

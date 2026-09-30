@@ -42,14 +42,9 @@ export function checkItems(items, citations, urlKey = 'url') {
   return { unverified, checkable: true };
 }
 
-// Final audit across the whole dossier.
-export function audit(outputs, ledger) {
-  const claims = [];
-  for (const p of outputs.scout?.pain_signals ?? []) claims.push({ bot: 'scout', url: p.url });
-  for (const c of outputs.recon?.competitors ?? []) claims.push({ bot: 'recon', url: c.url });
-  for (const k of outputs.skeptic?.kill_reasons ?? []) if (k.evidence_url) claims.push({ bot: 'skeptic', url: k.evidence_url });
-  for (const f of outputs.closer?.first_customers ?? []) if (f.source_url) claims.push({ bot: 'closer', url: f.source_url });
-
+// Final audit over a list of {bot, url} claims.
+export function audit(claims, ledger) {
+  claims = claims.filter((c) => c.url);
   if (ledger.unavailable && ledger.size === 0) {
     return { score: null, total: claims.length, verified: 0, flagged: [], note: 'Search tools returned no citation list, so the receipts could not be checked.' };
   }
