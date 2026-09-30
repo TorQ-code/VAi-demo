@@ -58,7 +58,7 @@ npm test
 
 In demo mode the Chief catches two planted mistakes (a fabricated X link, and a bot that would reply to email without asking), and the Red Team merges three guardrails.
 
-**No code?** [`grok-bot/chief.md`](grok-bot/chief.md) has paste-ready instructions and routines that run the same process inside a single Grok Bot called "Chief". It's a shareable template in its own right.
+**Run it as a real team of Grok Bots (no code):** [`grok-bot/chief.md`](grok-bot/chief.md) sets up Chief as the manager. Upload [`grok-bot/TEAM.md`](grok-bot/TEAM.md) to Chief's Files, and Chief creates Scout, Recon, Architect, Red Team, Closer, Habit Coach and Auditor as separate bots. It then runs every mission with numbered work orders and reports, sends weak work back, and creates the winning bot after you approve.
 
 | Env var | Default | |
 |---|---|---|
@@ -81,5 +81,6 @@ src/grok.js         xAI Responses API client
 src/mock.js         offline demo client
 src/report.js       Markdown Bot Card + dossier
 public/index.html   the UI (the Bot Card mirrors the Grok Bot builder)
-grok-bot/chief.md   the whole Forge as one paste-in Grok Bot
+grok-bot/chief.md   Chief (the manager) as a Grok Bot: setup, instructions, routines
+grok-bot/TEAM.md    Bot Cards for the 7 teammates Chief creates
 ```
