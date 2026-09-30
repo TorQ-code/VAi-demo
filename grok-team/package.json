@@ -1,0 +1,14 @@
+{
+  "name": "grok-war-room",
+  "version": "1.0.0",
+  "description": "A Grok Chief bot that runs a team of specialist bots to validate a startup idea with real receipts from X.",
+  "type": "module",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "start": "node server.js",
+    "demo": "MOCK=1 node server.js",
+    "cli": "node cli.js",
+    "test": "node --test test/*.test.js"
+  },
+  "license": "MIT"
+}
