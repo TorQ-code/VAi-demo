@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Not Just Me</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --paper: #f6f4ef; --card: #ffffff; --ink: #16161a; --muted: #6b6a72; --line: #e3e0d8;
+    --signal: #ffd23f; --signal-ink: #16161a; --red: #d93a3f; --green: #1f8a5b; --amber: #c77800; --blue: #2d5bd7;
+    --red-bg: #fdecec; --green-bg: #e7f5ee; --amber-bg: #fff4dc;
+    --display: 'Archivo Black', 'Arial Black', sans-serif; --body: 'Inter Tight', system-ui, sans-serif; --mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #121216; --card: #1b1b21; --ink: #f2f0ea; --muted: #9a98a3; --line: #2c2c34;
+      --red: #ff6b6f; --green: #3ecf8e; --amber: #ffb547; --blue: #7c9cff;
+      --red-bg: #3a1d20; --green-bg: #15302a; --amber-bg: #33280f;
+    }
+  }
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.5; }
+  a { color: var(--blue); }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 20px 16px 64px; }
+  header { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .logo { font-family: var(--display); font-size: 22px; letter-spacing: -.01em; display: flex; align-items: center; gap: 8px; }
+  .logo .q { background: var(--signal); color: var(--signal-ink); padding: 0 8px; border-radius: 4px; transform: rotate(-3deg); display: inline-block; }
+  .pill { font: 600 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; padding: 5px 10px; border-radius: 99px; border: 1.5px solid var(--line); color: var(--muted); }
+  .pill.demo { border-color: var(--amber); color: var(--amber); }
+  .pill.live { border-color: var(--green); color: var(--green); }
+
+  h1 { font-family: var(--display); font-size: clamp(40px, 7.5vw, 80px); line-height: 1.05; padding-top: .05em; letter-spacing: -.02em; margin: 36px 0 14px; }
+  h1 mark { background: var(--signal); color: var(--signal-ink); padding: 0 .12em; }
+  .lede { font-size: 17px; color: var(--muted); max-width: 720px; }
+
+  form { margin-top: 24px; background: var(--card); border: 2px solid var(--ink); border-radius: 14px; padding: 14px; box-shadow: 6px 6px 0 var(--ink); }
+  label { display: block; font: 600 11px var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 6px; }
+  textarea, input { width: 100%; background: transparent; border: 0; color: var(--ink); font: 18px var(--body); resize: vertical; }
+  textarea { min-height: 64px; }
+  textarea:focus, input:focus { outline: none; }
+  .row { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; border-top: 1px dashed var(--line); margin-top: 10px; padding-top: 10px; }
+  .row > div { flex: 1 1 240px; min-width: 0; }
+  .row input { font-size: 15px; }
+  button { font: 600 14px var(--body); border: 0; border-radius: 10px; padding: 13px 22px; cursor: pointer; background: var(--ink); color: var(--paper); }
+  button:disabled { opacity: .5; cursor: wait; }
+  button.ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--line); padding: 7px 12px; font-size: 12.5px; border-radius: 8px; }
+  .examples { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+  .examples button { background: var(--card); color: var(--ink); border: 1.5px solid var(--line); font-weight: 500; font-size: 13px; padding: 7px 12px; border-radius: 99px; }
+
+  .banner { display: none; margin-top: 20px; background: var(--red); color: #fff; border-radius: 12px; padding: 16px 18px; font-weight: 600; }
+  .banner b { font-family: var(--display); font-weight: 400; letter-spacing: .02em; display: block; font-size: 20px; margin-bottom: 4px; }
+
+  .grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 20px; margin-top: 32px; }
+  @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+  .label { font: 600 11px var(--mono); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 10px; }
+
+  .team { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 10px; }
+  .bot { background: var(--card); border: 1.5px solid var(--line); border-radius: 12px; padding: 12px; position: relative; transition: border-color .2s, box-shadow .2s; }
+  .bot.lead { grid-column: 1 / -1; }
+  .bot .hd { display: flex; gap: 8px; align-items: center; }
+  .bot .emo { font-size: 22px; }
+  .bot .nm { font-weight: 700; }
+  .bot .tt { font: 10.5px var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  .bot .job { font-size: 12.5px; color: var(--muted); margin: 8px 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 4px; }
+  .chip { font: 10.5px var(--mono); padding: 2px 6px; border-radius: 4px; background: var(--paper); color: var(--muted); }
+  .chip.tool { background: var(--signal); color: var(--signal-ink); }
+  .chip.code { background: var(--ink); color: var(--paper); }
+  .st { margin-bottom: 8px; font: 600 10px var(--mono); text-transform: uppercase; display: flex; gap: 5px; align-items: center; color: var(--muted); }
+  .st::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+  .bot .now { font: 12px var(--mono); margin-top: 8px; min-height: 17px; overflow-wrap: anywhere; }
+  .bot[data-s="working"] { border-color: var(--ink); box-shadow: 3px 3px 0 var(--signal); }
+  .bot[data-s="working"] .st::before { background: var(--signal); box-shadow: 0 0 0 2px var(--ink); animation: blink 1s infinite; }
+  .bot[data-s="revising"] { border-color: var(--amber); }
+  .bot[data-s="revising"] .st { color: var(--amber); } .bot[data-s="revising"] .st::before { background: var(--amber); animation: blink .5s infinite; }
+  .bot[data-s="done"] .st { color: var(--green); } .bot[data-s="done"] .st::before { background: var(--green); }
+  .bot[data-s="flagged"] { border-color: var(--red); } .bot[data-s="flagged"] .st { color: var(--red); } .bot[data-s="flagged"] .st::before { background: var(--red); }
+  .bot[data-s="waiting"] .st::before { background: var(--muted); }
+  @keyframes blink { 50% { opacity: .3; } }
+
+  .log { background: var(--card); border: 1.5px solid var(--line); border-radius: 12px; height: 540px; overflow-y: auto; padding: 6px 0; font: 12.5px/1.45 var(--mono); }
+  @media (max-width: 860px) { .log { height: 360px; } }
+  .ev { display: grid; grid-template-columns: 42px 22px 1fr; gap: 6px; padding: 6px 12px; border-left: 3px solid transparent; animation: in .2s ease; }
+  .ev .t { color: var(--muted); } .ev .m { overflow-wrap: anywhere; }
+  .ev.no { border-left-color: var(--amber); background: var(--amber-bg); }
+  .ev.yes .m { color: var(--green); }
+  .ev.dim .m { color: var(--muted); }
+  .ev.haz { border-left-color: var(--red); background: var(--red-bg); }
+  .ev.fin { border-left-color: var(--ink); font-weight: 600; }
+  .empty { color: var(--muted); padding: 14px; }
+  @keyframes in { from { opacity: 0; transform: translateY(3px); } }
+
+  #report { display: none; margin-top: 40px; }
+  .verdict { border: 2px solid var(--ink); border-radius: 16px; padding: 24px; box-shadow: 6px 6px 0 var(--ink); background: var(--card); display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 24px; }
+  @media (max-width: 760px) { .verdict { grid-template-columns: 1fr; } }
+  .verdict.NOT_JUST_YOU { background: var(--signal); color: var(--signal-ink); }
+  .verdict.NOT_JUST_YOU .muted { color: rgba(22,22,26,.7); }
+  .big { font-family: var(--display); font-size: clamp(36px, 6vw, 64px); line-height: .95; letter-spacing: -.02em; }
+  .vh { font-size: 19px; font-weight: 600; margin-top: 12px; }
+  .muted { color: var(--muted); }
+  .gate { margin-top: 12px; border-left: 3px solid currentColor; padding: 4px 10px; font-size: 14px; }
+  .stat { font-family: var(--display); font-size: 48px; line-height: 1; }
+  .bars { display: flex; align-items: flex-end; gap: 4px; height: 70px; margin-top: 12px; }
+  .bars div { flex: 1; background: currentColor; border-radius: 3px 3px 0 0; min-height: 4px; position: relative; }
+  .bars-x { display: flex; justify-content: space-between; font: 11px var(--mono); margin-top: 4px; }
+  .conf { font: 600 12px var(--mono); margin-top: 14px; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 16px; margin-top: 20px; }
+  @media (max-width: 400px) { .cards { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1.5px solid var(--line); border-radius: 14px; padding: 18px; min-width: 0; }
+  .card h3 { font-family: var(--display); font-weight: 400; font-size: 22px; letter-spacing: -.01em; margin-bottom: 10px; }
+  .card p, .card li { font-size: 14.5px; }
+  .card p + p { margin-top: 8px; }
+  .card ol, .card ul { padding-left: 20px; } .card li { margin: 6px 0; }
+  .fix { border: 1.5px solid var(--line); border-radius: 10px; padding: 12px; margin-top: 10px; }
+  .fix .fh { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+  .fix .ft { font-weight: 700; }
+  .badge { font: 600 10.5px var(--mono); text-transform: uppercase; padding: 2px 7px; border-radius: 4px; }
+  .badge.safe { background: var(--green-bg); color: var(--green); }
+  .badge.moderate { background: var(--amber-bg); color: var(--amber); }
+  .badge.pro_only { background: var(--red-bg); color: var(--red); }
+  .fix .meta { font: 11.5px var(--mono); color: var(--muted); margin-top: 6px; overflow-wrap: anywhere; }
+  .locked { background: var(--red-bg); color: var(--red); border-radius: 8px; padding: 8px 10px; font-size: 13.5px; margin-top: 8px; }
+  .ok { color: var(--green); } .warn { color: var(--amber); }
+  .owed { border-left: 3px solid var(--line); padding: 4px 10px; margin: 10px 0; font-size: 14px; overflow-wrap: anywhere; }
+  .owed .k { font: 600 10.5px var(--mono); text-transform: uppercase; color: var(--muted); }
+  .msg { background: var(--paper); border-radius: 10px; padding: 12px; font-size: 14px; margin: 8px 0; white-space: pre-wrap; }
+  .msg-hd { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; gap: 8px; }
+  .quote { border-left: 3px solid var(--signal); padding: 2px 10px; margin: 10px 0; font-size: 14px; }
+  .quote .meta { font: 11.5px var(--mono); color: var(--muted); margin-top: 3px; overflow-wrap: anywhere; }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 20px; }
+  footer { margin-top: 56px; font-size: 12.5px; color: var(--muted); max-width: 720px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">not just me<span class="q">?</span></div>
+    <span id="mode" class="pill">connecting…</span>
+  </header>
+
+  <h1>Something broke.<br>Is it <mark>just you?</mark></h1>
+  <p class="lede">Describe what's going wrong with your phone, car, appliance, app or service. Grok Chief sends a team of bots to find other people on X with the same problem, fixes that actually worked, and any recall, warranty or settlement you're owed. Then they write the claim for you.</p>
+
+  <form id="f">
+    <label for="problem">What's going wrong?</label>
+    <textarea id="problem" maxlength="800" required placeholder="e.g. Since the update last week my car's touchscreen reboots every time I connect my phone"></textarea>
+    <div class="row">
+      <div><label for="product">Product / model (optional)</label><input id="product" maxlength="120" placeholder="e.g. 2024 Kestrel EV, Model S2"></div>
+      <button id="go" type="submit">Investigate →</button>
+    </div>
+  </form>
+  <div class="examples" id="examples">
+    <button type="button" data-p="Phone battery drains overnight since the latest system update" data-m="Pixelite 9 phone">🔋 Battery drain after update</button>
+    <button type="button" data-p="Dishwasher stopped mid-cycle and shows error E24, won't drain" data-m="Kelvin DW-500 dishwasher">🍽️ Dishwasher error E24</button>
+    <button type="button" data-p="Router drops Wi-Fi every evening around 8pm, have to restart it" data-m="">📶 Wi-Fi drops every evening</button>
+    <button type="button" data-p="Laptop battery is swelling and the trackpad is lifting up" data-m="">⚠️ Swelling battery</button>
+  </div>
+
+  <div class="banner" id="banner"></div>
+
+  <div class="grid">
+    <div><div class="label">The team</div><div class="team" id="team"></div></div>
+    <div><div class="label">Case log: the Chief's channel</div><div class="log" id="log"><div class="empty">No open case. Describe a problem above.</div></div></div>
+  </div>
+
+  <section id="report"></section>
+
+  <footer>Bots research and draft, and you decide what to send. Nothing is posted for you. This is not legal advice. If anyone is in danger, call your local emergency number.</footer>
+</div>
+
+<script>
+const ROSTER = [
+  { id: 'chief', name: 'Grok Chief', emoji: '🧠', title: 'Incident Commander', job: 'Triages the problem, plans the searches, assigns the team, sends back anything without receipts, and makes the call.', tools: [], skills: ['triage', 'delegation', 'review', 'final call'] },
+  { id: 'echo', name: 'Echo', emoji: '🛰️', title: 'X Signal Hunter', job: 'Finds people on X with the same problem right now, and when it started.', tools: ['x_search'], skills: ['spike timing'] },
+  { id: 'rights', name: 'Rights', emoji: '⚖️', title: 'Entitlements', job: 'Finds recalls, service bulletins, warranty coverage and class actions.', tools: ['web_search'], skills: ['recalls'] },
+  { id: 'fixer', name: 'Fixer', emoji: '🔧', title: 'Fix Finder', job: 'Finds fixes that worked for others, ranked by confirmations.', tools: ['x_search', 'web_search'], skills: [] },
+  { id: 'safety', name: 'Safety Officer', emoji: '🦺', title: 'Hazard Gate', job: 'Rules, not a model. Locks dangerous fixes and flags hazards at intake.', tools: [], skills: [], code: true },
+  { id: 'advocate', name: 'Advocate', emoji: '📨', title: 'Claims Writer', job: 'Writes the claim that gets you a repair, replacement or refund.', tools: [], skills: ['escalation'] },
+  { id: 'auditor', name: 'Auditor', emoji: '🧾', title: 'Receipts Officer', job: 'Code that checks every link against what the searches actually returned.', tools: [], skills: [], code: true },
+];
+const LABEL = { NOT_JUST_YOU: "It's not just you.", JUST_YOU: 'Looks like just you.', TOO_EARLY: 'Too early to tell.' };
+const $ = (s, r = document) => r.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const safeUrl = (u) => { try { const x = new URL(u); return /^https?:$/.test(x.protocol) ? x.href : '#'; } catch { return '#'; } };
+const link = (u, t) => `<a href="${esc(safeUrl(u))}" target="_blank" rel="noopener noreferrer nofollow">${esc(t ?? u)}</a>`;
+const tick = (v) => v === true ? '<span class="ok">✓ verified</span>' : v === false ? '<span class="warn">⚠ unverified</span>' : '';
+const byId = Object.fromEntries(ROSTER.map((b) => [b.id, b]));
+let es = null, markdown = '', demo = false;
+
+function renderTeam() {
+  $('#team').innerHTML = ROSTER.map((b) => `
+    <div class="bot ${b.id === 'chief' ? 'lead' : ''}" id="bot-${b.id}" data-s="idle">
+      <div class="st">idle</div>
+      <div class="hd"><span class="emo">${b.emoji}</span><div><div class="nm">${esc(b.name)}</div><div class="tt">${esc(b.title)}</div></div></div>
+      <div class="job">${esc(b.job)}</div>
+      <div class="chips">${b.code ? '<span class="chip code">code</span>' : ''}${b.tools.map((t) => `<span class="chip tool">${t}</span>`).join('')}${b.skills.map((s) => `<span class="chip">${esc(s)}</span>`).join('')}</div>
+      <div class="now"></div>
+    </div>`).join('');
+}
+renderTeam();
+
+function setBot(id, s, msg) {
+  const el = $(`#bot-${id}`); if (!el) return;
+  el.dataset.s = s; $('.st', el).textContent = s; if (msg) $('.now', el).textContent = msg;
+}
+function log(e, cls = '') {
+  const L = $('#log'); $('.empty', L)?.remove();
+  const d = document.createElement('div'); d.className = `ev ${cls}`;
+  d.innerHTML = `<span class="t">${((e.t || 0) / 1000).toFixed(1)}s</span><span>${byId[e.bot]?.emoji || '•'}</span><span class="m">${esc(e.msg)}</span>`;
+  L.appendChild(d); L.scrollTop = L.scrollHeight;
+}
+
+fetch('/api/health').then((r) => r.json()).then((h) => {
+  demo = h.demo;
+  $('#mode').textContent = h.demo ? 'Demo · simulated data' : `Live · ${h.models.chief}`;
+  $('#mode').className = `pill ${h.demo ? 'demo' : 'live'}`;
+}).catch(() => { $('#mode').textContent = 'offline'; });
+
+$('#examples').onclick = (e) => { const b = e.target.closest('button'); if (!b) return; $('#problem').value = b.dataset.p; $('#product').value = b.dataset.m; };
+
+$('#f').onsubmit = (ev) => {
+  ev.preventDefault();
+  const problem = $('#problem').value.trim(); if (problem.length < 10) return;
+  es?.close(); renderTeam();
+  $('#log').innerHTML = ''; $('#report').style.display = 'none'; $('#banner').style.display = 'none';
+  $('#go').disabled = true; $('#go').textContent = 'Investigating…';
+  const q = new URLSearchParams({ problem, product: $('#product').value.trim() });
+  es = new EventSource(`/api/investigate?${q}`);
+  es.onmessage = (m) => handle(JSON.parse(m.data));
+  es.onerror = finish;
+};
+function finish() { es?.close(); $('#go').disabled = false; $('#go').textContent = 'Investigate →'; }
+
+function handle(e) {
+  switch (e.type) {
+    case 'status': setBot(e.bot, e.data.status, e.msg); break;
+    case 'assign': log(e, 'dim'); setBot(e.data.to, 'waiting', 'Assignment received'); break;
+    case 'review': log(e, e.data.accepted ? 'yes' : 'no'); if (!e.data.accepted) setBot(e.data.bot, 'revising', 'Sent back by Chief'); break;
+    case 'safety':
+      log(e, 'haz');
+      $('#banner').innerHTML = `<b>⚠ Safety first</b>${e.data.hazards.map((h) => esc(h.msg)).join('<br>')}`;
+      $('#banner').style.display = 'block'; break;
+    case 'verdict': log(e, 'fin'); break;
+    case 'error': log(e, 'haz'); finish(); break;
+    case 'done': log(e); render(e.data); break;
+    case 'markdown': markdown = e.data; finish(); break;
+    case 'hello': break;
+    default: if (e.msg) log(e);
+  }
+}
+
+function render(r) {
+  const o = r.outputs, v = r.verdict, t = r.timeline, rc = r.receipts || {};
+  const ec = o.echo || {}, rt = o.rights || {}, fx = o.fixer || {}, ad = o.advocate || {};
+  const max = Math.max(1, ...t.days.map((d) => d.count));
+  const bars = t.days.length ? `<div class="bars">${t.days.map((d) => `<div style="height:${(d.count / max) * 100}%" title="${esc(d.date)}: ${d.count}"></div>`).join('')}</div>
+    <div class="bars-x muted"><span>${esc(t.first_seen)}</span><span>${esc(t.days.at(-1).date)}</span></div>` : '';
+  const owed = [
+    ...(rt.recalls || []).map((x) => `<div class="owed"><div class="k">Recall · ${esc(x.authority)}</div>${link(x.url, x.title)} ${tick(x.verified)}<br><span class="muted">Applies if: ${esc(x.applies_if)}</span></div>`),
+    ...(rt.bulletins || []).map((x) => `<div class="owed"><div class="k">Service bulletin</div>${link(x.url, x.title)} ${tick(x.verified)}</div>`),
+    ...(rt.class_actions || []).map((x) => `<div class="owed"><div class="k">Class action · ${esc(x.status)}${x.deadline ? ` · deadline ${esc(x.deadline)}` : ''}</div>${link(x.url, x.name)} ${tick(x.verified)}</div>`),
+  ].join('');
+
+  $('#report').innerHTML = `
+    <div class="label">Case report${demo ? ' · demo data' : ''}</div>
+    <div class="verdict ${esc(v.verdict)}">
+      <div>
+        <div class="big">${esc(LABEL[v.verdict] || v.verdict)}</div>
+        <div class="vh">${esc(v.headline)}</div>
+        <p class="muted" style="margin-top:8px"><b>Likely cause:</b> ${esc(v.likely_cause)}</p>
+        ${v.gate ? `<div class="gate">${esc(v.gate)}</div>` : ''}
+        <div class="conf">${esc(v.confidence)}% confidence · receipts ${rc.score == null ? 'n/a' : esc(rc.score) + '%'}</div>
+      </div>
+      <div>
+        <div class="stat">${t.verified}</div>
+        <div class="muted">verified reports from other people${t.first_seen ? `, first seen ${esc(t.first_seen)}` : ''}</div>
+        ${bars}
+      </div>
+    </div>
+    <div class="cards">
+      <div class="card"><h3>Do this now</h3><ol>${v.do_now.map((x) => `<li>${esc(x)}</li>`).join('')}</ol>
+        ${v.avoid.length ? `<p style="margin-top:12px"><b>Avoid</b></p><ul>${v.avoid.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</div>
+      <div class="card"><h3>🔧 Fixes that worked</h3>
+        ${(fx.fixes || []).map((f) => `<div class="fix"><div class="fh"><span class="ft">${esc(f.title)}</span><span class="badge ${esc(f.risk)}">${esc(String(f.risk).replace('_', ' '))}</span></div>
+          ${f.locked ? `<div class="locked">🦺 Locked by Safety Officer: ${esc(f.safety_note)} (${f.hidden_steps} steps hidden)</div>` : `<ol style="margin-top:6px">${(f.steps || []).map((s) => `<li>${esc(s)}</li>`).join('')}</ol>`}
+          <div class="meta">👍 ${esc(f.confirmations ?? 0)} confirmed${f.minutes ? ` · ~${esc(f.minutes)} min` : ''} · ${link(f.source_url, 'source')} ${tick(f.verified)}</div></div>`).join('') || `<p class="muted">${esc(fx.no_fix_reason || 'No fixes found yet.')}</p>`}</div>
+      <div class="card"><h3>⚖️ What you're owed</h3><p>${esc(rt.entitlement_summary)}</p><p class="muted"><b>Warranty:</b> ${esc(rt.warranty)}</p>
+        ${owed || '<p class="muted">No recalls, bulletins or class actions found.</p>'}</div>
+      <div class="card"><h3>📨 Your claim, ready to send</h3><p><b>Ask for:</b> ${esc(ad.ask_for)}</p>
+        <div class="msg-hd"><b>Message to support</b><button class="ghost" data-copy="support_message">Copy</button></div><div class="msg">${esc(ad.support_message)}</div>
+        <div class="msg-hd"><b>Public post (X)</b><button class="ghost" data-copy="public_post">Copy</button></div><div class="msg">${esc(ad.public_post)}</div>
+        <p style="margin-top:10px"><b>If they stall</b></p><ol>${(ad.escalation || []).map((x) => `<li>${esc(x)}</li>`).join('')}</ol>
+        ${(ad.deadlines || []).length ? `<p><b>⏰ Deadlines</b></p><ul>${ad.deadlines.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</div>
+      <div class="card"><h3>🛰️ Others with this problem · ${esc(ec.spread || 'n/a')}</h3><p class="muted">${esc(ec.summary)}</p>
+        <p><b>Trigger:</b> ${esc(ec.trigger)}</p>
+        ${(ec.reports || []).map((p) => `<div class="quote">“${esc(p.quote)}”<div class="meta">${esc(p.handle)} · ${esc(p.date)} · ${esc(p.match)} match · ${link(p.url, 'post')} ${tick(p.verified)}</div></div>`).join('') || '<p class="muted">Nobody else found yet.</p>'}</div>
+      <div class="card"><h3>🧾 Receipts</h3><p>${esc(rc.note)}</p>
+        ${(rc.flagged || []).map((f) => `<p class="warn">⚠ ${esc(f.bot)}: ${esc(f.url)}</p>`).join('')}
+        <p class="muted" style="margin-top:10px">${r.stats.calls} model calls · ${(r.stats.ms / 1000).toFixed(1)}s</p></div>
+    </div>
+    <div class="actions"><button id="dl">Download case report (.md)</button><button class="ghost" id="cp">Copy as Markdown</button></div>`;
+  $('#report').style.display = 'block';
+  $('#report').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  $('#report').querySelectorAll('[data-copy]').forEach((b) => b.onclick = () => { navigator.clipboard?.writeText(ad[b.dataset.copy] || ''); b.textContent = 'Copied'; });
+  $('#dl').onclick = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([markdown], { type: 'text/markdown' })); a.download = 'not-just-me-case.md'; a.click(); };
+  $('#cp').onclick = () => { navigator.clipboard?.writeText(markdown); $('#cp').textContent = 'Copied'; };
+}
+</script>
+</body>
+</html>
