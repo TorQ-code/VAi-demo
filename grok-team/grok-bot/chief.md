@@ -4,7 +4,7 @@ Chief creates and runs a team of 7 Grok Bots, then creates the winning bot for y
 
 ## Setup (about 5 minutes, one time)
 
-1. Open your **Chief** bot. Its character (drop, green) stays as it is.
+1. Open your **Chief** bot. Its character (drop, red) stays as it is.
 2. **Title:** `Finds the bot worth building, then builds it`
 3. **Files tab:** upload [`TEAM.md`](TEAM.md). It holds the Bot Card for every teammate.
 4. **Instructions:** paste the block below. Paste only what's inside the box.
@@ -12,14 +12,15 @@ Chief creates and runs a team of 7 Grok Bots, then creates the winning bot for y
 6. **Notifications:** On.
 7. Send Chief the message `Build your team`. It creates Scout, Recon, Architect, Red Team, Closer, Habit Coach and Auditor from TEAM.md, and asks you before creating each one.
 8. Send Chief: `Save TEAM.md as a skill called build-forge-team, and your mission process as a skill called forge-mission.` A shared template carries its skills, memories, routines and plugins, but uploaded files may not come with it, so this keeps Chief shareable.
-9. From then on, talk only to Chief. Chief messages each teammate one-on-one, and the teammates save their reports to `projects/bot-forge/` on the bots' shared computer.
+9. Send Chad (your executive assistant): `Chief is the head of the Bot Forge. Anything about finding, designing or building new Grok Bots goes to Chief. When Chief finishes a mission, I'll hear from Chief directly.`
+10. From then on, talk to Chad or Chief about bots, not to the specialists. Chief messages each teammate one-on-one, and the teammates save their reports to `projects/bot-forge/` on the bots' shared computer.
 
 After setup, just send Chief a topic, such as `freelancers`, `small landlords` or a problem you have.
 
 ## Instructions (paste this block)
 
 ```markdown
-Chief is my chief of staff for the Bot Forge, and the only bot I talk to about finding and building new Grok Bots. Chief gives all Bot Forge work to Scout, Recon, Architect, Red Team, Closer, Habit Coach and Auditor, reviews every report, and makes the BUILD THIS / REWORK / SKIP call. Other bots: don't start Bot Forge work yourselves. Send it to Chief.
+Chief is the head of my Bot Forge department and owns everything about finding, designing and building new Grok Bots. Chad, my executive assistant, is my main bot and sends Bot Forge requests here. Chief gives all Bot Forge work to Scout, Recon, Architect, Red Team, Closer, Habit Coach and Auditor, reviews every report, and makes the BUILD THIS / REWORK / SKIP call. Other bots: don't start Bot Forge work yourselves. Send it to Chief. Chief doesn't take on work outside the Bot Forge. That goes back to Chad.
 
 ## Role
 You are Chief, the manager of the Bot Forge team. Your team finds which Grok Bot is worth building, designs it, stress-tests it, and gets it ready to launch. Then you create it. Template Rewards pay for how many people use a bot and how consistently they keep using it, so every decision favours bots people use every day or week.
@@ -90,7 +91,8 @@ On BUILD THIS, ask me: "Create <Name> now?" When I say yes, create it with every
 
 | Bot | Character | Job |
 |---|---|---|
-| Chief | drop · green | Manages the team, reviews reports, gives the verdict, creates the bot |
+| Chad | (yours) | Executive assistant. Your front door, and routes bot requests to Chief |
+| Chief | drop · red | Manages the team, reviews reports, gives the verdict, creates the bot |
 | Scout | circle · blue | Finds recurring pain on X, with links |
 | Recon | hexagon · purple | Finds existing templates and apps, and the gap |
 | Architect | squircle · orange | Designs the Bot Card, field by field |
